@@ -61,7 +61,7 @@ regd_users.post("/login", (req, res) => {
 regd_users.put("/auth/reviews/:isbn", (req, res) => {
   const bookId = req.params.isbn;
   const username = req.user.username; // Assuming req.user contains logged-in user's info
-  const review = req.body.review; // Assuming review text is sent in request body
+  const review = req.params.review; // Assuming review text is sent in request body
 
   // Check if the book exists
   if (books[bookId]) {
