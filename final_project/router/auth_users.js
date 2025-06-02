@@ -61,7 +61,7 @@ regd_users.post("/login", (req, res) => {
 regd_users.put("/auth/reviews/:isbn", (req, res) => {
   const bookId = req.params.isbn;
   const username = req.user.username; // Assuming req.user contains logged-in user's info
-  const review = req.params.review; // Assuming review text is sent in request body
+  const review = req.body.review; // Assuming review text is sent in request body
 
   // Check if the book exists
   if (books[bookId]) {
@@ -78,18 +78,22 @@ regd_users.put("/auth/reviews/:isbn", (req, res) => {
   }
 });
 
-regd_users.get('/auth/reviews/:isbn', function (req, res) {
-    const bookId = req.params.isbn;
-    const username = req.user.username; // Assuming req.user contains logged-in user's info
+regd_users.get('/auth/reviews/:isbn', (req, res) => {
+  const bookId = req.params.isbn;
+  const username = req.user.username;
 
-    // Check if the book exists
-    if (books[bookId]) {
-        const reviews = books[bookId].reviews[username];
-        res.status(200).json({ reviews: reviews });
+  if (books[bookId]) {
+    const review = books[bookId].reviews ? books[bookId].reviews[username] : null;
+    if (review) {
+      res.status(200).json({ review: review }); // singular "review"
     } else {
-        res.status(404).json({ message: "Book not found" });
+      res.status(404).json({ message: "No review found for this user." });
     }
+  } else {
+    res.status(404).json({ message: "Book not found" });
+  }
 });
+
 
 
 module.exports.authenticated = regd_users;
