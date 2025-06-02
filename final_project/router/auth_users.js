@@ -59,21 +59,25 @@ regd_users.post("/login", (req, res) => {
 
 // Add a book review
 regd_users.put("/auth/reviews/:isbn", (req, res) => {
-  //Write your code here
   const bookId = req.params.isbn;
+  const username = req.user.username; // Assuming req.user contains logged-in user's info
+  const review = req.body.review; // Assuming review text is sent in request body
 
   // Check if the book exists
   if (books[bookId]) {
-      const reviews = books[bookId].reviews;
-      if (reviews) {
-        books[bookId]["reviews"] = reviews;
-      }
-      books[bookId] = books[bookId];
-      res.send(`Your review has been updated.`);
+    // Initialize reviews object if not present
+    if (!books[bookId].reviews) {
+      books[bookId].reviews = {};
+    }
+    // Save or update the review for the logged-in user
+    books[bookId].reviews[username] = review;
+
+    res.send(`Your review has been added/updated.`);
   } else {
-      res.status(404).json({ message: "Book not found" });
+    res.status(404).json({ message: "Book not found" });
   }
 });
+
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
