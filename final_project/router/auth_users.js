@@ -78,6 +78,19 @@ regd_users.put("/auth/reviews/:isbn", (req, res) => {
   }
 });
 
+regd_users.get('/auth/reviews/:isbn', function (req, res) {
+    const bookId = req.params.isbn;
+    const username = req.user.username; // Assuming req.user contains logged-in user's info
+
+    // Check if the book exists
+    if (books[bookId]) {
+        const reviews = books[bookId].reviews[username];
+        res.status(200).json({ reviews: reviews });
+    } else {
+        res.status(404).json({ message: "Book not found" });
+    }
+});
+
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
