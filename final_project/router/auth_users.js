@@ -94,7 +94,10 @@ regd_users.get('/auth/reviews/:isbn', (req, res) => {
   }
 });
 
-
+regd_users.get('/auth',function (req, res) {
+  //Write your code here
+   res.send(JSON.stringify({books}, null, 4));
+});
 
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
