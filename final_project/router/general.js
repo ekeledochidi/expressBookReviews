@@ -62,21 +62,23 @@ public_users.get('/author/:author', async function (req, res) {
 
 
 // Get all books based on title
-public_users.get('/title/:title', function (req, res) {
+public_users.get('/title/:title', async function (req, res) {
     const title = req.params.title.toLowerCase();
-    const results = [];
 
-    // Loop through each book to find matching title
-    for (const key in books) {
-        if (books[key].title.toLowerCase() === title) {
-            results.push({ id: key, ...books[key] });
+    try {
+        // Find books by the specified author
+        const results = Object.entries(books)
+            .filter(([key, book]) => book.title.toLowerCase() === title)
+            .map(([key, book]) => ({ id: key, ...book }));
+
+        if (results.length > 0) {
+            res.status(200).json({ books: results });
+        } else {
+            res.status(404).json({ message: "No books found by that title." });
         }
-    }
-
-    if (results.length > 0) {
-        res.status(200).json({ books: results });
-    } else {
-        res.status(404).json({ message: "No books found by that title." });
+    } catch (error) {
+        console.error("Error fetching books:", error);
+        res.status(500).json({ message: "An error occurred while processing your request." });
     }
 });
 
