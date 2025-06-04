@@ -40,21 +40,26 @@ public_users.get('/isbn/:isbn',function (req, res) {
  });
   
 // Get book details based on author
-public_users.get('/author/:author', function (req, res) {
+public_users.get('/author/:author', async function (req, res) {
     const author = req.params.author.toLowerCase();
-    const results = [];
 
-    // Loop through each book to find matching author
-    for (const key in books) {
-        if (books[key].author.toLowerCase() === author) {
-            results.push({ id: key, ...books[key] });
+    try {
+        // Fetch books asynchronously
+        const books = await getBooks()
+
+        // Find books by the specified author
+        const results = Object.entries(books)
+            .filter(([key, book]) => book.author.toLowerCase() === author)
+            .map(([key, book]) => ({ id: key, ...book }));
+
+        if (results.length > 0) {
+            res.status(200).json({ books: results });
+        } else {
+            res.status(404).json({ message: "No books found by that author." });
         }
-    }
-
-    if (results.length > 0) {
-        res.status(200).json({ books: results });
-    } else {
-        res.status(404).json({ message: "No books found by that author." });
+    } catch (error) {
+        console.error("Error fetching books:", error);
+        res.status(500).json({ message: "An error occurred while processing your request." });
     }
 });
 
