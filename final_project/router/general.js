@@ -39,18 +39,11 @@ public_users.get('/isbn/:isbn',function (req, res) {
   return res.status(300).json({message: "Yet to be implemented"});
  });
 
-// async to get books
-async function getBooks() {
-    return {books};
-}
 // Get book details based on author
 public_users.get('/author/:author', async function (req, res) {
     const author = req.params.author.toLowerCase();
 
     try {
-        // Fetch books asynchronously
-        const books = await getBooks()
-
         // Find books by the specified author
         const results = Object.entries(books)
             .filter(([key, book]) => book.author.toLowerCase() === author)
